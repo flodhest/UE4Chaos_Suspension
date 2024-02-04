@@ -5,12 +5,34 @@
 UMyChaosVehicleMovementComponent::UMyChaosVehicleMovementComponent()
     : bIsRaisingSuspension(false),
     bIsLoweringSuspension(false),
-    SuspensionAdjustmentSpeed(5.0f) 
+    SuspensionAdjustmentSpeed(5.0f)
 {
     for (const FChaosWheelSetup& WheelSetup : WheelSetups)
     {
         UChaosVehicleWheel* NewWheel = CreateDefaultSubobject<UChaosVehicleWheel>(WheelSetup.BoneName);
-        Wheels.Add(NewWheel);
+        if (NewWheel)
+        {
+            Wheels.Add(NewWheel);
+        }
+        else
+        {
+            UE_LOG(LogTemp, Error, TEXT("Failed to create wheel for bone %s"), *WheelSetup.BoneName.ToString());
+        }
+    }
+}
+
+void UMyChaosVehicleMovementComponent::AdjustSuspension(float TargetHeight)
+{
+    for (UChaosVehicleWheel* Wheel : Wheels)
+    {
+        if (Wheel)
+        {
+            Wheel->SuspensionForceOffset = FMath::Lerp(Wheel->SuspensionForceOffset, FVector(0, 0, TargetHeight), SuspensionAdjustmentSpeed * GetWorld()->GetDeltaSeconds());
+        }
+        else
+        {
+            UE_LOG(LogTemp, Warning, TEXT("A wheel is null while adjusting suspension height."));
+        }
     }
 }
 
@@ -18,12 +40,16 @@ void UMyChaosVehicleMovementComponent::RaiseSuspension()
 {
     bIsRaisingSuspension = true;
     bIsLoweringSuspension = false;
+
+    UE_LOG(LogTemp, Warning, TEXT("Raise Suspension key pressed"));
 }
 
 void UMyChaosVehicleMovementComponent::LowerSuspension()
 {
     bIsRaisingSuspension = false;
     bIsLoweringSuspension = true;
+
+    UE_LOG(LogTemp, Warning, TEXT("Lower Suspension key pressed"));
 }
 
 void UMyChaosVehicleMovementComponent::StopSuspensionAction()
@@ -34,24 +60,20 @@ void UMyChaosVehicleMovementComponent::StopSuspensionAction()
 
 void UMyChaosVehicleMovementComponent::AdjustSuspensionHeight(float NewHeight)
 {
-    for (UChaosVehicleWheel* Wheel : Wheels)
-    {
-        if (Wheel)
-        {
-            Wheel->SuspensionForceOffset = FMath::Lerp(Wheel->SuspensionForceOffset, FVector(0, 0, NewHeight), SuspensionAdjustmentSpeed * GetWorld()->GetDeltaSeconds());
-        }
-    }
+    AdjustSuspension(NewHeight);
 }
 
 void UMyChaosVehicleMovementComponent::AdjustSuspensionHeightForWheels(int32 WheelIndex1, int32 WheelIndex2, float NewHeight)
 {
-    if (!Wheels.IsValidIndex(WheelIndex1) || !Wheels.IsValidIndex(WheelIndex2))
+    if (Wheels.IsValidIndex(WheelIndex1) && Wheels.IsValidIndex(WheelIndex2))
     {
-        return;
+        Wheels[WheelIndex1]->SuspensionForceOffset = FMath::Lerp(Wheels[WheelIndex1]->SuspensionForceOffset, FVector(0, 0, NewHeight), SuspensionAdjustmentSpeed * GetWorld()->GetDeltaSeconds());
+        Wheels[WheelIndex2]->SuspensionForceOffset = FMath::Lerp(Wheels[WheelIndex2]->SuspensionForceOffset, FVector(0, 0, NewHeight), SuspensionAdjustmentSpeed * GetWorld()->GetDeltaSeconds());
     }
-
-    Wheels[WheelIndex1]->SuspensionForceOffset = FMath::Lerp(Wheels[WheelIndex1]->SuspensionForceOffset, FVector(0, 0, NewHeight), SuspensionAdjustmentSpeed * GetWorld()->GetDeltaSeconds());
-    Wheels[WheelIndex2]->SuspensionForceOffset = FMath::Lerp(Wheels[WheelIndex2]->SuspensionForceOffset, FVector(0, 0, NewHeight), SuspensionAdjustmentSpeed * GetWorld()->GetDeltaSeconds());
+    else
+    {
+        UE_LOG(LogTemp, Error, TEXT("Invalid wheel indices (%d, %d) while adjusting suspension height for wheels."), WheelIndex1, WheelIndex2);
+    }
 }
 
 void UMyChaosVehicleMovementComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -82,11 +104,11 @@ void UMyChaosVehicleMovementComponent::TickComponent(float DeltaTime, ELevelTick
 
     if (bIsRaisingSuspension)
     {
-        AdjustSuspensionHeight(35.0f);
+        AdjustSuspension(35.0f);
     }
     else if (bIsLoweringSuspension)
     {
-        AdjustSuspensionHeight(0.0f);
+        AdjustSuspension(0.0f);
     }
     else
     {
