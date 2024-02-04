@@ -15,7 +15,7 @@
 
 ### Steg 4: Lägg till komponenten i Blueprint
 
-1. Kompilera Unrealprojektet för att integrera och konvertera C++ kklassen till en komponent.
+1. Kompilera Unrealprojektet för att integrera och konvertera C++ klassen till en komponent.
 2. Öppna Blueprinten `BP_Volvo_Truck_EV_Chassi` i Unreal Engine Editor.
 3. I Components-fönstret, klicka på "Add Component" och sök efter `MyChaosVehicleMovementComponent`.
 4. Välj komponenten och den kommer att läggas till i din Blueprint.
