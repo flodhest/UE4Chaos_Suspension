@@ -19,19 +19,24 @@
   - **Function Implementations:**
     - **AdjustSuspension:**
       - Adjustment of suspension height for all wheels.
+
     - **RaiseSuspension and LowerSuspension:**
       - Flags for initiating suspension raise/lower actions.
       - Logs key presses for user interaction insight.
+
     - **StopSuspensionAction:**
       - Resets flags for suspension actions.
+
     - **AdjustSuspensionHeight and AdjustSuspensionHeightForWheels:**
       - Customization of suspension height for all or specific wheel pairs.
+
     - **TickComponent:**
       - Handles key inputs, adjusts suspension dynamically.
       - Responds to Y and H keys for raising/lowering suspension.
-      - Fine-tunes suspension for specific wheel pairs(boogie) with Q and W keys.
+      - Fine-tunes suspension for specific wheelpairs(boogie) with Q and W keys.
 
 - **Usage:**
   - Attach `UMyChaosVehicleMovementComponent` to your vehicle actor.
   - Adjust suspension parameters and key bindings as needed.
   - Observe dynamic suspension adjustments in response to user input during gameplay.
+  - Observe Output log for errors.
