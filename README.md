@@ -26,7 +26,7 @@
 
 1. Med Blueprinten öppen, markera den nyss tillagda komponenten.
 2. I detaljfönstret till höger kan du justera inställningar som `SuspensionAdjustmentSpeed` och andra parametrar.
-3. Observera att knapparna Y och H samt Q och W är bundnda till funktionerna. Ändra i .cpp filen till önskvärda knappar.
+3. Observera att knapparna Y och H samt Q och W är bundna till funktionerna. Ändra i .cpp filen till önskvärda knappar.
 
 ### Steg 6: Kör projektet
 
