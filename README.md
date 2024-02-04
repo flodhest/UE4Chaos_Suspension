@@ -30,8 +30,7 @@
 
 ### Steg 6: Kör projektet
 
-1. Spara Blueprinten och stäng Blueprint-fönstret.
-2. Tryck på "Play" för att köra ditt projekt och observera de dynamiska justeringarna i fordonets fjädring baserat på användarinput.
+1. Tryck på "Play" för att köra projektet.
 
 **Antecka eventuella fel som underlag för refaktorering**
 
