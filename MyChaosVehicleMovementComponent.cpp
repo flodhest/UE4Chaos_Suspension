@@ -1,19 +1,19 @@
-
 #include "MyChaosVehicleMovementComponent.h"
 #include "GameFramework/PlayerController.h"
 #include "Engine/World.h"
 
 UMyChaosVehicleMovementComponent::UMyChaosVehicleMovementComponent()
     : bIsRaisingSuspension(false),
-    bIsLoweringSuspension(false)
+    bIsLoweringSuspension(false),
+    SuspensionAdjustmentSpeed(5.0f) 
 {
-
     for (const FChaosWheelSetup& WheelSetup : WheelSetups)
     {
         UChaosVehicleWheel* NewWheel = CreateDefaultSubobject<UChaosVehicleWheel>(WheelSetup.BoneName);
         Wheels.Add(NewWheel);
     }
 }
+
 void UMyChaosVehicleMovementComponent::RaiseSuspension()
 {
     bIsRaisingSuspension = true;
@@ -38,7 +38,7 @@ void UMyChaosVehicleMovementComponent::AdjustSuspensionHeight(float NewHeight)
     {
         if (Wheel)
         {
-            Wheel->SuspensionForceOffset = FVector(0, 0, NewHeight);
+            Wheel->SuspensionForceOffset = FMath::Lerp(Wheel->SuspensionForceOffset, FVector(0, 0, NewHeight), SuspensionAdjustmentSpeed * GetWorld()->GetDeltaSeconds());
         }
     }
 }
@@ -50,8 +50,8 @@ void UMyChaosVehicleMovementComponent::AdjustSuspensionHeightForWheels(int32 Whe
         return;
     }
 
-    Wheels[WheelIndex1]->SuspensionForceOffset = FVector(0, 0, NewHeight);
-    Wheels[WheelIndex2]->SuspensionForceOffset = FVector(0, 0, NewHeight);
+    Wheels[WheelIndex1]->SuspensionForceOffset = FMath::Lerp(Wheels[WheelIndex1]->SuspensionForceOffset, FVector(0, 0, NewHeight), SuspensionAdjustmentSpeed * GetWorld()->GetDeltaSeconds());
+    Wheels[WheelIndex2]->SuspensionForceOffset = FMath::Lerp(Wheels[WheelIndex2]->SuspensionForceOffset, FVector(0, 0, NewHeight), SuspensionAdjustmentSpeed * GetWorld()->GetDeltaSeconds());
 }
 
 void UMyChaosVehicleMovementComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -72,27 +72,24 @@ void UMyChaosVehicleMovementComponent::TickComponent(float DeltaTime, ELevelTick
 
         if (PlayerController->IsInputKeyDown(EKeys::Q))
         {
-         
-            AdjustSuspensionHeightForWheels(3, 5, 35.0f); 
+            AdjustSuspensionHeightForWheels(3, 5, 35.0f);
         }
         else if (PlayerController->IsInputKeyDown(EKeys::W))
         {
-            
-            AdjustSuspensionHeightForWheels(3, 5, 0.0f); 
+            AdjustSuspensionHeightForWheels(3, 5, 0.0f);
         }
     }
 
-   
     if (bIsRaisingSuspension)
     {
-        AdjustSuspensionHeight(35.0f); 
+        AdjustSuspensionHeight(35.0f);
     }
     else if (bIsLoweringSuspension)
     {
-        AdjustSuspensionHeight(0.0f); 
+        AdjustSuspensionHeight(0.0f);
     }
     else
-    {    
+    {
         StopSuspensionAction();
     }
 }

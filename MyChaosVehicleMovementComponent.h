@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include "CoreMinimal.h"
@@ -26,9 +25,11 @@ public:
     UFUNCTION(BlueprintCallable, Category = "Vehicle Suspension")
         void AdjustSuspensionHeight(float NewHeight);
 
-
     UFUNCTION(BlueprintCallable, Category = "Vehicle Suspension")
         void AdjustSuspensionHeightForWheels(int32 WheelIndex1, int32 WheelIndex2, float NewHeight);
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Vehicle Suspension")
+        float SuspensionAdjustmentSpeed;
 
     bool bIsRaisingSuspension;
     bool bIsLoweringSuspension;
